@@ -11,10 +11,16 @@ int m2_r2 = 25;
 int m1 = 6;
 int m2 = 7;
 
+// Limit Switches
+int l1 = 44;
+int l2 = 45;
+int l3 = 46;
+int l4 = 47;
+
 void setup()
 {
   Serial.begin(9600);
-
+  
   // Sensors
   pinMode(ledPin, OUTPUT);
   pinMode(IRSensorPin, INPUT);
@@ -29,9 +35,15 @@ void setup()
   pinMode(m1, OUTPUT);
   pinMode(m2, OUTPUT);
 
+  // Limit switches
+  pinMode(l1, INPUT);
+  pinMode(l2, INPUT);
+  pinMode(l3, INPUT);
+  pinMode(l4, INPUT);
+  
   // Zero all motors.
-  set_motor_speed(1, 100);
-  set_motor_speed(2, 100);
+  set_motor_speed(1, 0);
+  set_motor_speed(2, 0);
 }
 
 int getIRDistance(int pin) {
@@ -69,22 +81,63 @@ void set_motor_speed(int motor, int speed) {
   }
 }
 
+void cycle_motors_once() {
+  int speed = 200;
+  set_motor_speed(1, speed);
+  set_motor_speed(2, speed);
+  delay(5000);
+
+  set_motor_speed(1, 1);
+  set_motor_speed(2, 1);
+  delay(5000);
+  
+  set_motor_speed(1, -1*speed);
+  set_motor_speed(2, -1*speed);
+  delay(5000);
+
+  set_motor_speed(1, -1);
+  set_motor_speed(2, -1);
+  delay(5000);  
+}
+
+void shutdown() {
+  Serial.println("Shutting Down.");
+  set_motor_speed(1, 0);
+  set_motor_speed(2, 0);
+  while(1);
+}
+
+
+// This function assumes pull-up switches.
+int read_limit_switch_robust(int swtch) {
+  int NUM_READS = 10;
+  for (int i = 0; i < NUM_READS; i++) {
+    if (digitalRead(swtch) == HIGH)  return HIGH;
+  }
+  return LOW;
+  
+}
+
+void zero_routine() {
+  set_motor_speed(1, 200);
+  while (read_limit_switch_robust(l4) == HIGH);
+  set_motor_speed(1, -1);
+  set_motor_speed(1, 0);
+
+  delay(2000);
+
+  set_motor_speed(2, -200);
+  while (read_limit_switch_robust(l2) == HIGH);
+  set_motor_speed(2, 0);
+
+  delay(2000);
+}
+
 void loop()
 {
-//  int speed = 255;
-//  set_motor_speed(1, speed);
-//  set_motor_speed(2, speed);
-//  delay(3000);
-//
-//  set_motor_speed(1, 0);
-//  set_motor_speed(2, 0);
-//  delay(3000);
-//  
-//  set_motor_speed(1, -1*speed);
-//  set_motor_speed(2, -1*speed);
-//  delay(3000);
-
-  set_motor_speed(1, -105);
-  set_motor_speed(2, -105);
+  zero_routine();
+  while(1) {
+    delay(100);  
+  }
 }
 
