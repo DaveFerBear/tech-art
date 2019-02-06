@@ -18,7 +18,7 @@ int l3 = 46;
 int l4 = 47;
 
 void setup()
-{
+{ 
   Serial.begin(9600);
   
   // Sensors
@@ -44,6 +44,8 @@ void setup()
   // Zero all motors.
   set_motor_speed(1, 0);
   set_motor_speed(2, 0);
+
+  zero_routine();
 }
 
 int getIRDistance(int pin) {
@@ -119,8 +121,8 @@ int read_limit_switch_robust(int swtch) {
 }
 
 void zero_routine() {
-  set_motor_speed(1, 200);
-  while (read_limit_switch_robust(l4) == HIGH);
+  set_motor_speed(1, -200);
+  while (read_limit_switch_robust(l3) == HIGH);
   set_motor_speed(1, -1);
   set_motor_speed(1, 0);
 
@@ -133,11 +135,32 @@ void zero_routine() {
   delay(2000);
 }
 
+int in_int, in_motor;
+void wait_for_serial() {
+  while (!Serial.available()){
+    //Do Absolutely Nothing until something is received over the serial port
+  }  
+}
+void user_input_mode() {
+  Serial.println("Select Motor (1/2): ");
+  wait_for_serial();
+  in_motor = Serial.parseInt();
+  Serial.println("Select Speed (-255, 255): ");
+  wait_for_serial();
+  in_int = Serial.parseInt();
+  
+  set_motor_speed(in_motor, in_int);
+  delay(250);
+  int brake_limit = 0;
+  if (in_int > 0) {
+    brake_limit = -1;
+  }
+  set_motor_speed(in_motor, brake_limit);
+  delay(100);
+  set_motor_speed(in_motor, 0);
+}
 void loop()
 {
-  zero_routine();
-  while(1) {
-    delay(100);  
-  }
+  user_input_mode();
 }
 
