@@ -8,10 +8,8 @@ int m2_r1 = 24;
 int m2_r2 = 25;
 
 // Motor Controller
-int m1 = A0;
-int m2 = A1;
-
-int cnt;
+int m1 = 6;
+int m2 = 7;
 
 void setup()
 {
@@ -31,15 +29,9 @@ void setup()
   pinMode(m1, OUTPUT);
   pinMode(m2, OUTPUT);
 
-  cnt = 0;
-}
-
-void rampMotor(int motorPin) {
-  delay(50);
-  cnt += 1;
-  cnt = cnt%255;
-  analogWrite(ledPin, cnt);
-  analogWrite(motorPin, cnt);
+  // Zero all motors.
+  set_motor_speed(1, 100);
+  set_motor_speed(2, 100);
 }
 
 int getIRDistance(int pin) {
@@ -52,7 +44,7 @@ int getIRDistance(int pin) {
   return cm;
 }
 
-private void set_motor_direction(int motor, bool forward) {
+void set_motor_direction(int motor, bool forward) {
   if (motor == 1) {
     digitalWrite(m1_r1, forward);
     digitalWrite(m1_r2, forward);
@@ -62,53 +54,37 @@ private void set_motor_direction(int motor, bool forward) {
   }
 }
 
-private void set_motor_speed(int motor, int speed) {
+void set_motor_speed(int motor, int speed) {
   // speed within [-255,255]
   int reverse = false;
   if (speed < 0) {
     reverse = true;
   }
 
-  set_motor_direction(motor, reverse);
+  set_motor_direction(motor, !reverse);
   if (motor == 1) {
-    analogWrite(m1, speed);
+    analogWrite(m1, abs(speed));
   } else if (motor == 2) {
-    analogWrite(m2, speed);
+    analogWrite(m2, abs(speed));
   }
-}
-
-void cyle_motors() {
-  set_motor_direction(1, true);
-  set_motor_direction(2, true);
-  analogWrite(m1, 1023);
-  analogWrite(m2, 1023);
-  delay(500);
-  analogWrite(m1, 0);
-  analogWrite(m2, 0);
-  
-  delay(2000);
-
-  set_motor_direction(1, false);
-  set_motor_direction(2, false);
-  analogWrite(m1, 1023);
-  analogWrite(m2, 1023);
-  delay(500);
-  analogWrite(m1, 0);
-  analogWrite(m2, 0);
-
-  delay(2000);  
 }
 
 void loop()
 {
-  set_motor_direction(1, true);
-  set_motor_direction(2, true);
-  
-  analogWrite(m1, 1023);
-  analogWrite(m2, 1023);
-  delay(200);
-  
-  analogWrite(m1, 0);
-  analogWrite(m2, 0);
+//  int speed = 255;
+//  set_motor_speed(1, speed);
+//  set_motor_speed(2, speed);
+//  delay(3000);
+//
+//  set_motor_speed(1, 0);
+//  set_motor_speed(2, 0);
+//  delay(3000);
+//  
+//  set_motor_speed(1, -1*speed);
+//  set_motor_speed(2, -1*speed);
+//  delay(3000);
+
+  set_motor_speed(1, -105);
+  set_motor_speed(2, -105);
 }
 
