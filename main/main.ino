@@ -7,7 +7,7 @@ void setup()
 {
   Serial.begin(9600);
   pinMode(LED_PIN, OUTPUT);
-  // mw.zero_routine();
+  //mw.zero_routine();
 }
 
 int in_int, in_motor, in_duration;
@@ -44,6 +44,15 @@ void user_input_mode() {
 }
 void loop()
 {
-  user_input_mode();
+  mw.test_relays();
+//  user_input_mode();
+//  Serial.print(digitalRead(44));
+//  Serial.print("\t");
+//  Serial.print(digitalRead(45));
+//  Serial.print("\t");
+//  Serial.print(digitalRead(46));
+//  Serial.print("\t");
+//  Serial.print(digitalRead(47));
+//  Serial.println();
 }
 

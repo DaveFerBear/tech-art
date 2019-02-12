@@ -146,5 +146,23 @@ class MotorWrapper {
 
       delay(2000);
     }
+
+
+
+    ////////////////////////////////////////////////////////////
+    //               TEST HELPER FUNCTIONS                    //
+    ////////////////////////////////////////////////////////////
+
+    void test_relays() {
+      Serial.println("TESTING RELAYS");
+      int relays[4] = {m1_r1, m1_r2, m2_r1, m2_r2};
+      for (int i = 0; i < 4; i++) {
+        digitalWrite(relays[i], HIGH);
+        delay(1000);
+        digitalWrite(relays[i], LOW);
+        delay(1000);
+      }
+    }
+    
 };
 
