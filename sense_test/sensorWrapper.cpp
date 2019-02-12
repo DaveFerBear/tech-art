@@ -1,17 +1,13 @@
-#define NUM_IR 3
-#define NUM_US 0
+#define NUM_IR 4
 
 #include <math.h>
 #include "Arduino.h" // Used for analogRead()
 
 class SensorWrapper {
   private:
-    int IR_sensors[NUM_IR] = {A7, A9, A10};
-    double IR_mags[NUM_IR] = {0.0, 0.0, 0.0};
-    int IR_angles[NUM_IR] = { -30, 0, 30};
-
-    int US_sensors[NUM_US] = {};
-    double US_mags[NUM_US] = {};
+    int IR_sensors[NUM_IR] = {A8, A9, A10, A11};
+    int IR_mags[NUM_IR] = {0, 0, 0, 0};
+    int IR_angles[NUM_IR] = {-45, -15, 15, 45};
 
     double x = 0, y = 0;
 
@@ -24,6 +20,16 @@ class SensorWrapper {
       double yval = mag * sin(angle);
       return yval;
     }
+
+    int read_pin_robust(int pin) {
+      int num_readings = 20;
+      int sum = 0;
+      for (int i = 0; i < num_readings; i++) {
+        sum += analogRead(pin);
+      }
+      return sum/num_readings;
+    }
+    
     int getIRDistance(int pin) {
       int cm = 150;
 
@@ -41,9 +47,14 @@ class SensorWrapper {
     }
 
   public:
+    void setup() {
+      for (int i = 0; i < NUM_IR; i++)
+        pinMode(IR_sensors[i], INPUT);
+    }
+    
     void test_and_set() {
       for (int i = 0; i < NUM_IR; i++) {
-        IR_mags[i] = analogRead(IR_sensors[i]);
+        IR_mags[i] = getIRDistance(IR_sensors[i]);
       }
 
       // Make new x_vals array by mapping x_comp onto magnitudes array and angles array
@@ -56,6 +67,8 @@ class SensorWrapper {
       for (int i = 0; i < NUM_IR; i++) {
         yfinal += y_comp(IR_mags[i], IR_angles[i]);
       }
+      this->x = xfinal;
+      this->y = yfinal;
     }
 
     double get_x() {
@@ -64,5 +77,9 @@ class SensorWrapper {
 
     double get_y() {
       return this->y;
+    }
+
+    int* get_IR_mags() {
+      return this->IR_mags;
     }
 };
