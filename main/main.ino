@@ -2,38 +2,10 @@
 
 #include "motorWrapper.cpp"
 
+MotorWrapper mw;
 void setup()
 {
   Serial.begin(9600);
-
-  // Sensors
-  pinMode(LED_PIN, OUTPUT);
-
-  // Relays
-  pinMode(m1_r1, OUTPUT);
-  pinMode(m1_r2, OUTPUT);
-  pinMode(m2_r1, OUTPUT);
-  pinMode(m2_r2, OUTPUT);
-
-  // Motors
-  pinMode(m1, OUTPUT);
-  pinMode(m2, OUTPUT);
-
-  // Limit switches
-  pinMode(l1, INPUT);
-  pinMode(l2, INPUT);
-  pinMode(l3, INPUT);
-  pinMode(l4, INPUT);
-
-  // Encoders
-  pinMode(encoderPinA, INPUT_PULLUP);
-  pinMode(encoderPinB, INPUT_PULLUP);
-//  attachInterrupt(digitalPinToInterrupt(encoderPinA), ISR_A, CHANGE);
-//  attachInterrupt(digitalPinToInterrupt(encoderPinB), ISR_B, CHANGE);
-
-  // Zero all motors.
-  set_motor_speed(1, 0);
-  set_motor_speed(2, 0);
   //zero_routine();
 }
 
