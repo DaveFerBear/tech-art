@@ -1,0 +1,4 @@
+A8 -  BROWN  (long)
+A9 -  RED    (long)
+A10 - ORANGE (short)
+A11 - GREEN  (long)
