@@ -6,6 +6,7 @@ MotorWrapper mw;
 void setup()
 {
   Serial.begin(9600);
+  mw.setup();
   pinMode(LED_PIN, OUTPUT);
   //mw.zero_routine();
 }
@@ -42,17 +43,10 @@ void user_input_mode() {
   mw.set_motor_speed(in_motor, 0);
   delay(1000);
 }
+
 void loop()
 {
-  mw.test_relays();
-//  user_input_mode();
-//  Serial.print(digitalRead(44));
-//  Serial.print("\t");
-//  Serial.print(digitalRead(45));
-//  Serial.print("\t");
-//  Serial.print(digitalRead(46));
-//  Serial.print("\t");
-//  Serial.print(digitalRead(47));
-//  Serial.println();
+  //mw.test_relays();
+  //user_input_mode();
 }
 

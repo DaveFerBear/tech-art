@@ -3,10 +3,10 @@
 class MotorWrapper {
   private:
     // Motor, Relay
-    int m1_r1 = 22;
-    int m1_r2 = 23;
-    int m2_r1 = 24;
-    int m2_r2 = 25;
+    int m1_r1 = 27;
+    int m1_r2 = 26;
+    int m2_r1 = 28;
+    int m2_r2 = 29;
 
     // Motor Controller
     int m1 = 6;
@@ -155,12 +155,12 @@ class MotorWrapper {
 
     void test_relays() {
       Serial.println("TESTING RELAYS");
-      int relays[4] = {m1_r1, m1_r2, m2_r1, m2_r2};
+      int relays[4] = {this->m1_r1, this->m1_r2, this->m2_r1, this->m2_r2};
       for (int i = 0; i < 4; i++) {
         digitalWrite(relays[i], HIGH);
-        delay(1000);
+        delay(250);
         digitalWrite(relays[i], LOW);
-        delay(1000);
+        delay(250);
       }
     }
     
