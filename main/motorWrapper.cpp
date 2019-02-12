@@ -53,7 +53,7 @@ class MotorWrapper {
       set_motor_speed(1, 0);
       set_motor_speed(2, 0);
     }
-
+    
     void set_motor_direction(int motor, bool forward) {
       if (motor == 1) {
         digitalWrite(m1_r1, forward);
@@ -64,6 +64,24 @@ class MotorWrapper {
       }
     }
 
+    void ramp_profile(int motor, int velocity, int duration) {
+      int num_steps = 6;
+      for (int i = 1; i <= num_steps; i++)
+        square_profile(motor, i*velocity/num_steps, duration/2/num_steps);
+        
+      for (int i = num_steps-1; i >= 0; i--)
+        square_profile(motor, i*velocity/num_steps, duration/2/num_steps);
+    }
+    
+    void square_profile(int motor, int velocity, int duration) {
+      set_motor_speed(motor, velocity);
+      delay(duration);
+      if (velocity > 0)
+        set_motor_speed(motor, 1);
+      else
+        set_motor_speed(motor, -1);
+    }
+    
     void set_motor_speed(int motor, int speed) {
       // speed within [-255,255]
       int reverse = false;

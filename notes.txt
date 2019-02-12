@@ -1,4 +1,13 @@
+# Sensor Wiring
 A8 -  BROWN  (long)
 A9 -  RED    (long)
 A10 - ORANGE (short)
 A11 - GREEN  (long)
+
+# Braking Iteration
+
+Motor	Speed	Brakes?
+1	-255	Y
+1	255	N
+2	-255	Y
+2	255	N
