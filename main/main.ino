@@ -1,8 +1,11 @@
 # define LED_PIN 13
 
 #include "motorWrapper.cpp"
+#include "sensorWrapper.cpp"
 
 MotorWrapper mw;
+SensorWrapper sw;
+
 void setup()
 {
   Serial.begin(9600);
@@ -35,6 +38,9 @@ void user_input_mode() {
 
 void loop()
 {
-  
+  sw.test_and_set();
+  for (int i = 1; i <= 4; i++) {
+    mw.run_motor_until_limit(i);
+  }
 }
 

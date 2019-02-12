@@ -165,6 +165,33 @@ class MotorWrapper {
       delay(2000);
     }
 
+    void run_motor_until_limit(int limit_switch) {
+      int motor = 0, velocity = 0;
+      switch(limit_switch) {
+        case 1:
+          motor = 2;
+          velocity = 100;
+          break;
+        case 2:
+          motor = 2;
+          velocity = -100;
+          break;
+        case 3:
+          motor = 1;
+          velocity = -100;
+          break;
+        case 4:
+          motor = 1;
+          velocity = 100;
+          break;
+        default:
+          Serial.println("ERR: Invalid motor on run_motor_until_limit()");
+      }
+      
+      set_motor_speed(motor, velocity);
+      while(read_limit_switch_robust(limit_switch) == HIGH);
+      set_motor_speed(motor, 0);
+    }
 
 
     ////////////////////////////////////////////////////////////
