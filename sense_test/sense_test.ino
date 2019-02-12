@@ -1,9 +1,9 @@
-#define NUM_IR 3
+#define NUM_IR 4
 
-#include "sensorWrapper.cpp"
+//#include "sensorWrapper.cpp"
 
 int IR_sensors[NUM_IR] = {A8, A9, A10, A11};
-SensorWrapper sw;
+//SensorWrapper sw;
 
 void setup() {
   Serial.begin(9600);
@@ -14,12 +14,12 @@ void setup() {
 
 void loop() {
   for (int i = 0; i < NUM_IR; i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(getIRDistance(IR_sensors[i]));
+    Serial.print(getIRDistance(IR_sensors[i]));
+    Serial.print("\t");
   }
   
-  delay(100);
+  Serial.println();
+  delay(10);
 }
 
 int read_pin_robust(int pin) {
@@ -30,14 +30,3 @@ int read_pin_robust(int pin) {
   }
   return sum/num_readings;
 }
-
-int getIRDistance(int pin) {
-  // Mapping function: http://mess.uwaterloo.ca/datasheet/481D.pdf
-  int cm = 14.0 / (float(read_pin_robust(pin)) / 1023.0 * 5.0);
-  if (cm > 150) cm = 150;
-
-  // Alternate datasheet: http://mess.uwaterloo.ca/datasheet/480D.pdf
-  // int cm = 22.33/((float(analogRead(pin))/1023.0*5.0) - 0.189) - 0.42;
-  return cm;
-}
-
