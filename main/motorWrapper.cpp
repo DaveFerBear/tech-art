@@ -27,10 +27,6 @@ class MotorWrapper {
 
   public:
     void setup() {
-      mw.setup();
-      // Sensors
-      pinMode(LED_PIN, OUTPUT);
-
       // Relays
       pinMode(m1_r1, OUTPUT);
       pinMode(m1_r2, OUTPUT);
@@ -152,66 +148,3 @@ class MotorWrapper {
     }
 };
 
-
-//void ISR_A() {
-//  // look for a low-to-high on channel A
-//  if (digitalRead(encoderPinA) == HIGH) {
-//
-//    // check channel B to see which way encoder is turning
-//    if (digitalRead(encoderPinB) == LOW) {
-//      Serial.println("HIGH-LOW");
-//      encoderPos = encoderPos + 1;         // CW
-//    }
-//    else {
-//      Serial.println("HIGH-HIGH");
-//      encoderPos = encoderPos - 1;         // CCW
-//    }
-//  }
-//
-//  else   // must be a high-to-low edge on channel A
-//  {
-//    // check channel B to see which way encoder is turning
-//    if (digitalRead(encoderPinB) == HIGH) {
-//      Serial.println("LOW-HIGH");
-//      encoderPos = encoderPos + 1;          // CW
-//    }
-//    else {
-//      Serial.println("LOW-LOW");
-//      encoderPos = encoderPos - 1;          // CCW
-//    }
-//  }
-//  //Serial.println(encoderPos, DEC);
-//  // use for debugging - remember to comment out
-//
-//}
-//
-//void ISR_B() {
-//  // look for a low-to-high on channel B
-//  if (digitalRead(encoderPinB) == HIGH) {
-//
-//    // check channel A to see which way encoder is turning
-//    if (digitalRead(encoderPinA) == HIGH) {
-//      Serial.println("HIGH-HIGH");
-//      encoderPos = encoderPos + 1;         // CW
-//    }
-//    else {
-//      Serial.println("LOW-HIGH");
-//      encoderPos = encoderPos - 1;         // CCW
-//    }
-//  }
-//
-//  // Look for a high-to-low on channel B
-//
-//  else {
-//    // check channel B to see which way encoder is turning
-//    if (digitalRead(encoderPinA) == LOW) {
-//      Serial.println("LOW-LOW");
-//      encoderPos = encoderPos + 1;          // CW
-//    }
-//    else {
-//      Serial.println("HIGH-LOW");
-//      encoderPos = encoderPos - 1;          // CCW
-//    }
-//  }
-//  //Serial.println(encoderPos, DEC);
-//}
