@@ -12,6 +12,7 @@ void setup()
   mw.setup();
   pinMode(LED_PIN, OUTPUT);
   //mw.zero_routine();
+  Serial.println("Booting Up!");
 }
 
 int in_int, in_motor, in_duration;
@@ -33,14 +34,51 @@ void user_input_mode() {
   wait_for_serial();
   in_duration = Serial.parseInt();
 
-  mw.ramp_profile(in_motor, in_int, in_duration);
+  mw.square_profile(in_motor, in_int, in_duration);
 }
+
+int * mags;
+
+#define NUM_SENSOR_READS 10000
+long avg1, avg2, avg3, avg4;
 
 void loop()
 {
   sw.test_and_set();
-  for (int i = 1; i <= 4; i++) {
-    mw.run_motor_until_limit(i);
+  mags = sw.get_IR_mags();
+
+  avg1 = 0;
+  avg2 = 0;
+  avg3 = 0;
+  avg4 = 0;
+
+  for (int k = 0; k < NUM_SENSOR_READS; k++) {
+    avg1 += mags[0];
+    avg1 += mags[1];
+    avg2 += mags[2];
+    avg2 += mags[3];
   }
+  avg1 /= NUM_SENSOR_READS;
+  avg2 /= NUM_SENSOR_READS;
+
+  Serial.print(mags[0]);
+  Serial.print("\t");
+
+  Serial.print(mags[1]);
+  Serial.print("\t");
+
+  Serial.print(mags[2]);
+  Serial.print("\t");
+
+  Serial.println(mags[3]);
+
+
+//  if (avg1 > (avg2 + 50)) {
+//    mw.run_to_limit_safe(2);
+//  }
+//  else if (avg2 > (avg1 + 50)) {
+//    mw.run_to_limit_safe(1);
+//  }
+
 }
 

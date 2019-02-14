@@ -1,3 +1,7 @@
+#define MOTOR_RUN_TIME 5000
+#define DURATION 1000
+#define FINAL_MOTOR_SPEED 15
+
 #include "Arduino.h"
 
 class MotorWrapper {
@@ -53,7 +57,7 @@ class MotorWrapper {
       set_motor_speed(1, 0);
       set_motor_speed(2, 0);
     }
-    
+
     void set_motor_direction(int motor, bool forward) {
       if (motor == 1) {
         digitalWrite(m1_r1, forward);
@@ -64,15 +68,82 @@ class MotorWrapper {
       }
     }
 
+    void run_to_limit(int limit_switch) {
+      int motor_speed = FINAL_MOTOR_SPEED;
+      int motor = 0;
+      //Serial.print("Running to limit: ");
+      Serial.println(limit_switch);
+      
+      switch (limit_switch) {
+        case 1: 
+          motor = 2;
+          break;
+        case 2:
+          motor_speed *= -1;
+          motor = 2;
+          break;
+        case 3:
+          motor_speed *= -1;
+          motor = 1;
+          break;
+        case 4:
+          motor = 1;
+          break;
+      }
+
+      // Run for 2 seconds or until limit switch is hit.
+      int start_time = millis();
+      set_motor_speed(motor, motor_speed);
+      
+      while ( (millis() - start_time < MOTOR_RUN_TIME) && (read_limit_switch_robust(limit_switch) == HIGH)) {
+        //Serial.print("stuck ");
+        //Serial.println(millis() - start_time);
+        delay(250);
+      }
+      set_motor_speed(motor, 0);
+      //Serial.println("Ending Limit");
+    }
+
+    void run_to_limit_safe(int limit_switch) {
+      int motor_speed = FINAL_MOTOR_SPEED;
+      int motor = 0;
+      
+      switch (limit_switch) {
+        case 1: 
+          motor = 2;
+          break;
+        case 2:
+          motor_speed *= -1;
+          motor = 2;
+          break;
+        case 3:
+          motor_speed *= -1;
+          motor = 1;
+          break;
+        case 4:
+          motor = 1;
+          break;
+      }
+
+     if (read_limit_switch_robust(limit_switch) == LOW) return; // Sanity Check
+      
+      // Run for 2 seconds or until limit switch is hit.
+      int start_time = millis();
+      set_motor_speed(motor, motor_speed);
+      
+      while ( (millis() - start_time < DURATION) && (read_limit_switch_robust(limit_switch) == HIGH));
+      set_motor_speed(motor, 0);
+    }
+
     void ramp_profile(int motor, int velocity, int duration) {
       int num_steps = 6;
       for (int i = 1; i <= num_steps; i++)
-        square_profile(motor, i*velocity/num_steps, duration/2/num_steps);
-        
-      for (int i = num_steps-1; i >= 0; i--)
-        square_profile(motor, i*velocity/num_steps, duration/2/num_steps);
+        square_profile(motor, i * velocity / num_steps, duration / 2 / num_steps);
+
+      for (int i = num_steps - 1; i >= 0; i--)
+        square_profile(motor, i * velocity / num_steps, duration / 2 / num_steps);
     }
-    
+
     void square_profile(int motor, int velocity, int duration) {
       set_motor_speed(motor, velocity);
       delay(duration);
@@ -81,7 +152,7 @@ class MotorWrapper {
       else
         set_motor_speed(motor, -1);
     }
-    
+
     void set_motor_speed(int motor, int speed) {
       // speed within [-255,255]
       int reverse = false;
@@ -127,9 +198,11 @@ class MotorWrapper {
 
     // This function assumes pull-up switches.
     int read_limit_switch_robust(int swtch) {
-      int NUM_READS = 10;
+      int switches[4] = {l1,l2,l3,l4};
+      int NUM_READS = 100;
+      int cnt = 0;
       for (int i = 0; i < NUM_READS; i++) {
-        if (digitalRead(swtch) == HIGH)  return HIGH;
+        if (digitalRead(switches[swtch-1]) == HIGH) return HIGH;
       }
       return LOW;
 
@@ -137,63 +210,34 @@ class MotorWrapper {
 
     void zero_routine() {
       set_motor_speed(1, -120);
-      while (read_limit_switch_robust(l3) == HIGH);
+      while (read_limit_switch_robust(3) == HIGH);
       set_motor_speed(1, 1);
       set_motor_speed(1, 0);
 
       delay(2000);
 
       set_motor_speed(2, -120);
-      while (read_limit_switch_robust(l2) == HIGH);
+      while (read_limit_switch_robust(2) == HIGH);
       set_motor_speed(1, 1);
       set_motor_speed(2, 0);
 
       delay(2000);
 
       set_motor_speed(1, 120);
-      while (read_limit_switch_robust(l4) == HIGH);
+      while (read_limit_switch_robust(3) == HIGH);
       set_motor_speed(1, -1);
       set_motor_speed(1, 0);
 
       delay(2000);
 
       set_motor_speed(2, 120);
-      while (read_limit_switch_robust(l1) == HIGH);
+      while (read_limit_switch_robust(1) == HIGH);
       set_motor_speed(1, -1);
       set_motor_speed(2, 0);
 
       delay(2000);
     }
-
-    void run_motor_until_limit(int limit_switch) {
-      int motor = 0, velocity = 0;
-      switch(limit_switch) {
-        case 1:
-          motor = 2;
-          velocity = 100;
-          break;
-        case 2:
-          motor = 2;
-          velocity = -100;
-          break;
-        case 3:
-          motor = 1;
-          velocity = -100;
-          break;
-        case 4:
-          motor = 1;
-          velocity = 100;
-          break;
-        default:
-          Serial.println("ERR: Invalid motor on run_motor_until_limit()");
-      }
-      
-      set_motor_speed(motor, velocity);
-      while(read_limit_switch_robust(limit_switch) == HIGH);
-      set_motor_speed(motor, 0);
-    }
-
-
+    
     ////////////////////////////////////////////////////////////
     //               TEST HELPER FUNCTIONS                    //
     ////////////////////////////////////////////////////////////
@@ -208,6 +252,15 @@ class MotorWrapper {
         delay(250);
       }
     }
-    
+
+    void test_limit_switches() {
+      int switches[4] = {l1,l2,l3,l4};
+      for (int i = 1; i <= 4; i++) {
+      Serial.print(read_limit_switch_robust(i));
+      Serial.print("\t");
+      }
+      Serial.println();
+    }
+
 };
 

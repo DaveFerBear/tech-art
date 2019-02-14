@@ -42,6 +42,7 @@ class SensorWrapper {
         // Alternate datasheet: http://mess.uwaterloo.ca/datasheet/480D.pdf
         cm = 22.33 / ((float(read_pin_robust(pin)) / 1023.0 * 5.0) - 0.189);
         if (cm > 80) cm = 80;
+        cm*=2;
       }
       return cm;
     }
