@@ -1,5 +1,5 @@
 #define MOTOR_RUN_TIME 5000
-#define DURATION 1000
+#define DURATION 600
 #define FINAL_MOTOR_SPEED 15
 
 #include "Arduino.h"

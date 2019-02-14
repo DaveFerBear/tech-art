@@ -54,31 +54,30 @@ void loop()
 
   for (int k = 0; k < NUM_SENSOR_READS; k++) {
     avg1 += mags[0];
-    avg1 += mags[1];
-    avg2 += mags[2];
-    avg2 += mags[3];
+    avg2 += mags[1];
+    avg3 += mags[2];
+    avg4 += mags[3];
   }
   avg1 /= NUM_SENSOR_READS;
   avg2 /= NUM_SENSOR_READS;
+  avg3 /= NUM_SENSOR_READS;
+  avg4 /= NUM_SENSOR_READS;
 
-  Serial.print(mags[0]);
+  Serial.print(avg1);
   Serial.print("\t");
 
-  Serial.print(mags[1]);
+  Serial.print(avg2);
+  Serial.println("\t");
+
+  Serial.print(avg3);
   Serial.print("\t");
 
-  Serial.print(mags[2]);
-  Serial.print("\t");
+  Serial.println(avg4);
 
-  Serial.println(mags[3]);
-
-
-//  if (avg1 > (avg2 + 50)) {
-//    mw.run_to_limit_safe(2);
-//  }
-//  else if (avg2 > (avg1 + 50)) {
-//    mw.run_to_limit_safe(1);
-//  }
-
+  if (avg1 < 80 || avg2 < 80) {
+    mw.run_to_limit_safe(1);
+  } else if (avg3 < 80 || avg4 < 80) {
+    mw.run_to_limit_safe(2);
+  }
 }
 
